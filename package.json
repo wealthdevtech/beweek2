@@ -1,0 +1,24 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "beweek2",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wealthdevtech/beweek2.git"
+  },
+  "author": "wealthdevtech",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wealthdevtech/beweek2/issues"
+  },
+  "homepage": "https://github.com/wealthdevtech/beweek2#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
