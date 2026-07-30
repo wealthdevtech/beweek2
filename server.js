@@ -1,6 +1,7 @@
 import express from 'express';
 
 const app = express();
+app.use(express.json());
 const port = 3000;
 
 let tasks = [
@@ -35,6 +36,22 @@ app.get('/tasks/:id', (req, res) => {
   }
   res.json(id)
 });
+
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
+
+  if (!title) {
+      res.status(400).send("Title is missing.");
+  } else {
+      const newTask = {
+        id: tasks.length + 1,
+        title: title,
+        done: false
+      }
+
+      tasks.push(newTask);
+      res.status(200).json(newTask);}
+    });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
