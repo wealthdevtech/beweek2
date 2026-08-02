@@ -53,6 +53,21 @@ app.post('/tasks', (req, res) => {
       res.status(200).json(newTask);}
     });
 
+app.put('/tasks/:id', (req, res) => {
+  // const title = req.body.title;
+  // const done = req.body.done;
+  const task = tasks.find(t => t.id === parseInt(req.params.id));
+  if (!task) {
+    res.status(404).send("Task doesn't exist.");
+  } else if (!(typeof req.body.title === "string")) {
+      res.status(400).send("Title must be a string.");
+  } else {
+    task.title = req.body.title;
+    task.done = req.body.done;
+    res.status(200).json(task);
+  }
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
