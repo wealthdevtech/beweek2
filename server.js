@@ -66,6 +66,16 @@ app.put('/tasks/:id', (req, res) => {
     task.done = req.body.done;
     res.status(200).json(task);
   }
+});
+
+app.delete('/tasks/:id', (req, res) => {
+  const taskId = tasks.findIndex(t => t.id === parseInt(req.params.id));
+  if (taskId === -1) {
+    res.status(404).send("Task doesn't exist.");
+  } else {
+    const task = tasks.splice(taskId, 1);
+    res.status(204).json(task);
+  }
 })
 
 app.listen(port, () => {
