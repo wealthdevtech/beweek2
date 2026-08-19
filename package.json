@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/wealthdevtech/beweek2#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1",
+    "swagger-ui-express": "^5.0.1"
   }
 }

@@ -1,8 +1,18 @@
 import express from 'express';
+import Database from 'better-sqlite3';
+
 
 const app = express();
+const db = new Database('tasks.db');
 app.use(express.json());
 const port = 3000;
+
+// const createTable = (`CREATE TABLE IF NOT EXISTS tasks (
+//  id INTEGER PRIMARY KEY,addTasks.run(task.id, task.title, task.done);
+//  title TEXT,
+//  done BOOLEAN 
+//)`);
+//db.exec(createTable);
 
 let tasks = [
   {"id": 1, "title": "Chemistry", "done": false},
@@ -10,8 +20,9 @@ let tasks = [
   {"id": 3, "title": "Maths", "done": true}
 ];
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World!');
+const addTasks = db.prepare("INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)");
+// tasks.forEach((task) => {
+//   addTasks.run(task.id, task.title, Number(task.done));
 // });
 
 app.get('/', (req, res) => {
@@ -81,3 +92,5 @@ app.delete('/tasks/:id', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+db.close();
