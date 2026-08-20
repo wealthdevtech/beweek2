@@ -36,17 +36,20 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/tasks', (req, res) => {
-  res.json(tasks);
+    const getTasks = db.prepare("SELECT * FROM tasks");
+    res.json(getTasks.all());
+  //res.json(tasks);
 });
 
 app.get('/tasks/:id', (req, res) => {
-  //const id = parseInt(req.params.id); //converts req.params to an int
-  const id = tasks.find(task => task.id === parseInt(req.params.id)); //find the id from tasks, first
-  if (!id) {
+  const id = parseInt(req.params.id); //converts req.params to an int
+  const getTask = db.prepare("SELECT * FROM tasks WHERE id = ?");
+  // const id = tasks.find(task => task.id === parseInt(req.params.id)); //find the id from tasks, first
+  if (!(getTask.get(id))) {
     res.status(404).json({"error": `task ${req.params.id} not found`});
-  }
-  res.json(id)
-});
+  } else {
+    res.json(getTask.get(id));
+}});
 
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
@@ -93,4 +96,4 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-db.close();
+//db.close();
