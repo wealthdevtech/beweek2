@@ -53,19 +53,22 @@ app.get('/tasks/:id', (req, res) => {
 
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
+  //const { done } = req.body.done;
 
-  if (!title) {
+  if (typeof title !== 'string' || title.trim() === "") {
       res.status(400).send("Title is missing.");
-  } else {
-      const newTask = {
-        id: tasks.length + 1,
-        title: title,
-        done: false
-      }
+  }
+  const postTask = db.prepare("INSERT INTO tasks (title, done) VALUES (?, ?)");
+  postTask.run(title, 0);
+      // const newTask = {
+      //   id: tasks.length + 1,
+      //   title: title,
+      //   done: false
+      //}
 
-      tasks.push(newTask);
-      res.status(200).json(newTask);}
-    });
+      // tasks.push(newTask);
+  res.status(201).json(postTask);}
+);
 
 app.put('/tasks/:id', (req, res) => {
   // const title = req.body.title;
