@@ -53,45 +53,59 @@ app.get('/tasks/:id', (req, res) => {
 
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
-  //const { done } = req.body.done;
 
   if (typeof title !== 'string' || title.trim() === "") {
       res.status(400).send("Title is missing.");
   }
   const postTask = db.prepare("INSERT INTO tasks (title, done) VALUES (?, ?)");
   postTask.run(title, 0);
-      // const newTask = {
-      //   id: tasks.length + 1,
-      //   title: title,
-      //   done: false
-      //}
-
-      // tasks.push(newTask);
+    
   res.status(201).json(postTask);}
 );
 
 app.put('/tasks/:id', (req, res) => {
-  // const title = req.body.title;
-  // const done = req.body.done;
+  
   const task = tasks.find(t => t.id === parseInt(req.params.id));
-  if (!task) {
+  let { title, done } = req.body;
+
+  if (task.id === -1) {
     res.status(404).send("Task doesn't exist.");
-  } else if (!(typeof req.body.title === "string")) {
+
+  } else if (typeof title !== 'string' || title.trim() === "") {
       res.status(400).send("Title must be a string.");
+
   } else {
-    task.title = req.body.title;
-    task.done = req.body.done;
-    res.status(200).json(task);
+    const updateTask = db.prepare("UPDATE tasks SET title = ?, done = ? WHERE id = ?");
+
+    if (typeof done === 'boolean') {
+      if (done === true) {
+        done = 1;
+      } else {
+        done = 0;
+      }
+      return done;
+    } 
+
+    updateTask.run(title, done, task.id);
+    res.status(200);
+
+    const getTasks = db.prepare("SELECT * FROM tasks WHERE id = ?");
+    res.status(200).json(getTasks.get(task.id));
   }
 });
 
 app.delete('/tasks/:id', (req, res) => {
   const taskId = tasks.findIndex(t => t.id === parseInt(req.params.id));
+  
   if (taskId === -1) {
     res.status(404).send("Task doesn't exist.");
   } else {
-    const task = tasks.splice(taskId, 1);
-    res.status(204).json(task);
+    const deleteTask = db.prepare("DELETE FROM tasks WHERE id = ?");
+    deleteTask.run(taskId);
+    //const task = tasks.splice(taskId, 1);
+    const deleteDone = db.prepare("DELETE FROM tasks WHERE done = ?");
+    deleteDone.run(1);
+    res.status(204).json(taskId);
   }
 })
 
