@@ -8,7 +8,7 @@ app.use(express.json());
 const port = 3000;
 
 // const createTable = (`CREATE TABLE IF NOT EXISTS tasks (
-//  id INTEGER PRIMARY KEY,addTasks.run(task.id, task.title, task.done);
+//  id INTEGER PRIMARY KEY,
 //  title TEXT,
 //  done BOOLEAN 
 //)`);
@@ -20,10 +20,10 @@ let tasks = [
   {"id": 3, "title": "Maths", "done": true}
 ];
 
-const addTasks = db.prepare("INSERT INTO tasks (id, title, done) VALUES (?, ?, ?)");
-// tasks.forEach((task) => {
-//   addTasks.run(task.id, task.title, Number(task.done));
-// });
+// const addTasks = db.prepare("INSERT INTO tasks IF NOT EXISTS (id, title, done) VALUES (?, ?, ?)");
+//  tasks.forEach((task) => {
+//    addTasks.run(task.id, task.title, 0);
+//  });
 
 app.get('/', (req, res) => {
   res.send({ "name": "Task API", 
@@ -59,17 +59,21 @@ app.post('/tasks', (req, res) => {
   }
   const postTask = db.prepare("INSERT INTO tasks (title, done) VALUES (?, ?)");
   postTask.run(title, 0);
+
+  const getTask = db.prepare("SELECT * FROM tasks WHERE title = ?");
     
-  res.status(201).json(postTask);}
+  res.status(201).json(getTask.get(title));}
 );
 
 app.put('/tasks/:id', (req, res) => {
   
-  const task = tasks.find(t => t.id === parseInt(req.params.id));
+  const id = parseInt(req.params.id);
+  const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
   let { title, done } = req.body;
 
-  if (task.id === -1) {
+  if (!task) {
     res.status(404).send("Task doesn't exist.");
+
 
   } else if (typeof title !== 'string' || title.trim() === "") {
       res.status(400).send("Title must be a string.");
@@ -82,16 +86,14 @@ app.put('/tasks/:id', (req, res) => {
         done = 1;
       } else {
         done = 0;
-      }
-      return done;
-    } 
+      } 
 
     updateTask.run(title, done, task.id);
     res.status(200);
 
     const getTasks = db.prepare("SELECT * FROM tasks WHERE id = ?");
-    res.status(200).json(getTasks.get(task.id));
-  }
+    res.status(200).json(getTasks.get(id));
+  }}
 });
 
 app.delete('/tasks/:id', (req, res) => {
