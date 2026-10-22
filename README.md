@@ -9,4 +9,4 @@ To start the project:
 - Make a new directory and copy into it
 - Run 'node server.js' in the terminal (preferably bash)
 
-To test the API, I recommend using Postman and to visualize tasks.db, DB Browser for SQLite.
+To test the API, I recommend using Postman and to visualize tasks.db, DB Browser for SQLite, or a sqlite viewer in VS Code.
